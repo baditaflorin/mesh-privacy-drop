@@ -123,7 +123,9 @@ export function Feature({ room, roomId = "default", config }: Props) {
       .filter((drop): drop is EncryptedDrop => Boolean(drop) && !isExpired(drop!.expiresAt, now))
       .map((drop) => ({
         ...drop,
-        metadata: seal.ready ? parseMetadata(drop.sealedMetadata, seal.decryptText) : null,
+        metadata: seal.ready
+          ? parseMetadata(drop.sealedMetadata, (sealedMetadata) => seal.decryptText(sealedMetadata))
+          : null,
         complete:
           chunks.get(drop.id) instanceof Y.Array && chunks.get(drop.id)!.length === drop.chunks,
       }))
